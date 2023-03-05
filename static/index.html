@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
+
+    <script>
+        function baht_text(){
+            var baht_text_request = {
+                baht_amount: parseFloat($('#baht_amount').val())
+            }
+
+            $.ajax({
+                type: 'post',
+                url: '/v1/thai_nlp/baht_text',
+                data: JSON.stringify(baht_text_request),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                success: function (data) {
+                    /*
+                    var json = $.parseJSON(data); // create an object with the key of the array
+                    $('result_baht_text').value(json.baht_text);
+                     */
+                    //var json = JSON.parse(data);
+                    document.getElementById("result_baht_text").innerHTML = JSON.stringify(data);
+                }
+            });
+        }
+
+        function text_sort(){
+            var thai_text = $('#thai_text').val();
+            var array = thai_text.split(/\s+/);
+            var thai_text_req = {
+                texts: array
+            }
+            $.ajax({
+                type: 'post',
+                url: '/v1/thai_nlp/text_sorting',
+                data: JSON.stringify(thai_text_req),
+                contentType: "application/json; charset=utf-8",
+                traditional: true,
+                success: function (data) {
+                    document.getElementById("result_text_sort").innerHTML = JSON.stringify(data);
+                }
+            });
+
+        }
+    </script>
+
+</head>
+<body>
+<form>
+    <label for="baht_amount">จำนวนเงิน</label>
+    <input type="number" id="baht_amount" maxlength="15" name="baht_amount" value="100.35" placeholder="100.00"><br><br>
+    <button onclick="baht_text();" type="button">Baht Text</button>
+</form>
+<br>
+<div id="result_baht_text"></div><br><br>
+<form>
+    <label for="thai_text">เรียงคำไทย (แยกคำด้วย space)</label><br>
+    <textarea id ="thai_text" name="thai_text" rows="4" cols="50">ไก่ เกิด ไทย ไข่ cat เกรง เก่ง เก๋</textarea><br>
+    <button onclick="text_sort();" type="button">Sort</button>
+
+</form>
+<br>
+<div id="result_text_sort"></div><br><br>
+</body>
+</html>
